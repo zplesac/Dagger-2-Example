@@ -1,4 +1,4 @@
-package co.infinum.pokemon.database;
+package co.infinum.pokemon.database.interfaces;
 
 import java.util.List;
 
@@ -23,5 +23,9 @@ public interface PokemonDAO {
 
     Pokemon getByName(String name);
 
+    Pokemon getByName(String name, DatabaseModelListener<Pokemon> listener);
+
     List<Pokemon> getAll();
+
+    List<Pokemon> getAll(DatabaseModelListener<Pokemon> listener);
 }

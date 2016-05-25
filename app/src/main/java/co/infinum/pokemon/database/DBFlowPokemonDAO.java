@@ -2,6 +2,8 @@ package co.infinum.pokemon.database;
 
 import java.util.List;
 
+import co.infinum.pokemon.database.interfaces.DatabaseModelListener;
+import co.infinum.pokemon.database.interfaces.PokemonDAO;
 import co.infinum.pokemon.models.Pokemon;
 
 /**
@@ -45,7 +47,17 @@ public class DBFlowPokemonDAO implements PokemonDAO {
     }
 
     @Override
+    public Pokemon getByName(String name, DatabaseModelListener<Pokemon> listener) {
+        return null;
+    }
+
+    @Override
     public List<Pokemon> getAll() {
+        return null;
+    }
+
+    @Override
+    public List<Pokemon> getAll(DatabaseModelListener<Pokemon> listener) {
         return null;
     }
 }
