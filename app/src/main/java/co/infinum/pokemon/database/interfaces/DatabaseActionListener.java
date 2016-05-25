@@ -1,4 +1,4 @@
-package co.infinum.pokemon.database;
+package co.infinum.pokemon.database.interfaces;
 
 /**
  * Created by Željko Plesac on 25/05/16.

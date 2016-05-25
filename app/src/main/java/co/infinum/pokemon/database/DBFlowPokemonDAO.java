@@ -43,12 +43,23 @@ public class DBFlowPokemonDAO implements PokemonDAO {
 
     @Override
     public void delete(Pokemon pokemon) {
-
+        try{
+            pokemon.delete();
+        }
+        catch (Exception e){
+            Timber.e(e, "Exception occurred while deleting Pokemon!");
+        }
     }
 
     @Override
     public void delete(List<Pokemon> pokemons) {
-
+        try {
+            for(Pokemon pokemon : pokemons){
+                delete(pokemon);
+            }
+        } catch (Exception e) {
+            Timber.e(e, "Exception occurred while deleting Pokemons!");
+        }
     }
 
     @Override
