@@ -55,6 +55,8 @@ android {
     }
 }
 
+def dbflow_version = "3.0.0-beta6"
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.0.1'
@@ -67,6 +69,11 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'javax.inject:javax.inject:1'
 
+    apt "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
+
+
     compile 'com.google.dagger:dagger:2.0.1'
     apt 'com.google.dagger:dagger-compiler:2.0.1'
     compile 'org.glassfish:javax.annotation:10.0-b28'
@@ -77,27 +84,11 @@ dependencies {
     // unit tests
     testApt 'com.google.dagger:dagger-compiler:2.0'
     testCompile 'junit:junit:4.12'
-    testCompile ('com.squareup.assertj:assertj-android:1.1.0') {
+    testCompile('com.squareup.assertj:assertj-android:1.1.0') {
         exclude group: 'com.android.support'
     }
     testCompile 'org.hamcrest:hamcrest-library:1.3'
     testCompile 'org.apache.maven:maven-ant-tasks:2.1.3' // fixes issue on linux/mac
     testCompile('org.robolectric:robolectric:3.0')
     testCompile 'com.squareup.okhttp:mockwebserver:2.5.0'
-
-    // instrumentation tests
-    androidTestApt 'com.google.dagger:dagger-compiler:2.0.1'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
-    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.1'
-    androidTestCompile 'com.android.support.test:runner:0.4.1'
-    androidTestCompile 'com.android.support.test:rules:0.4.1'
-
-    androidTestCompile('com.squareup.okhttp:mockwebserver:2.5.0') {
-        exclude group: 'com.squareup.okhttp'
-    }
-    androidTestCompile 'org.mockito:mockito-core:1.10.19'
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
-
-
 }

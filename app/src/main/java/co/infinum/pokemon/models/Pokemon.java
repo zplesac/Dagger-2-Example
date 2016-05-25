@@ -2,14 +2,22 @@ package co.infinum.pokemon.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
+
 import android.text.TextUtils;
 
 import java.io.Serializable;
 
+import co.infinum.pokemon.database.PokemonDatabase;
+
 /**
  * Created by dino on 20/03/15.
  */
-public class Pokemon implements Serializable {
+@Table(database = PokemonDatabase.class)
+public class Pokemon extends BaseModel implements Serializable {
 
     public static final String NAME = "name";
 
@@ -25,26 +33,37 @@ public class Pokemon implements Serializable {
 
     public static final String WEIGHT = "weight";
 
+    @Column(name = "DatabaseId")
+    @PrimaryKey(autoincrement = true)
+    long databaseId;
+
     @SerializedName(NAME)
-    private String name;
+    @Column(name = "Name")
+    String name;
 
     @SerializedName(RESOURCE_URI)
-    private String resourceUri;
+    @Column(name = "ResourceUri")
+    String resourceUri;
 
     @SerializedName(HP)
-    private int hp;
+    @Column(name = "Hp")
+    int hp;
 
     @SerializedName(ATTACK)
-    private int attack;
+    @Column(name = "Attack")
+    int attack;
 
     @SerializedName(DEFENSE)
-    private int defense;
+    @Column(name = "Defense")
+    int defense;
 
     @SerializedName(HEIGHT)
-    private String height;
+    @Column(name = "Height")
+    String height;
 
     @SerializedName(WEIGHT)
-    private String weight;
+    @Column(name = "Weight")
+    String weight;
 
     public int getId() {
         try {
@@ -54,6 +73,10 @@ public class Pokemon implements Serializable {
         } catch (Exception e) {
             return 0;
         }
+    }
+
+    public long getDatabaseId() {
+        return databaseId;
     }
 
     public String getName() {
