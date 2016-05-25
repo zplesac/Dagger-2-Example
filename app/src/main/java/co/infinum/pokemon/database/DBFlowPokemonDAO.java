@@ -37,16 +37,19 @@ public class DBFlowPokemonDAO implements PokemonDAO {
 
     @Override
     public void update(Pokemon pokemon) {
-        SQLite.update(Pokemon.class)
-                .set(Pokemon_Table.Attack.eq(pokemon.getAttack()),
-                        Pokemon_Table.Defense.eq(pokemon.getDefense()),
-                        Pokemon_Table.Height.eq(pokemon.getHeight()),
-                        Pokemon_Table.Hp.eq(pokemon.getHp()),
-                        Pokemon_Table.Weight.eq(pokemon.getWeight()),
-                        Pokemon_Table.ResourceUri.eq(pokemon.getResourceUri())
-                )
-                .where(Pokemon_Table.Name.is(pokemon.getName())).execute();
-
+        try {
+            SQLite.update(Pokemon.class)
+                    .set(Pokemon_Table.Attack.eq(pokemon.getAttack()),
+                            Pokemon_Table.Defense.eq(pokemon.getDefense()),
+                            Pokemon_Table.Height.eq(pokemon.getHeight()),
+                            Pokemon_Table.Hp.eq(pokemon.getHp()),
+                            Pokemon_Table.Weight.eq(pokemon.getWeight()),
+                            Pokemon_Table.ResourceUri.eq(pokemon.getResourceUri())
+                    )
+                    .where(Pokemon_Table.Name.is(pokemon.getName())).execute();
+        } catch (Exception e) {
+            Timber.e(e, "Exception occurred while updating Pokemon!");
+        }
     }
 
     @Override
