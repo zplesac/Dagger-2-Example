@@ -5,6 +5,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.database.transaction.QueryTransaction;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 import co.infinum.pokemon.database.interfaces.DatabaseModelListener;
 import co.infinum.pokemon.database.interfaces.PokemonDAO;
 import co.infinum.pokemon.models.Pokemon;
+import co.infinum.pokemon.models.Pokemon_Table;
 import timber.log.Timber;
 
 /**
@@ -50,13 +52,30 @@ public class DBFlowPokemonDAO implements PokemonDAO {
     }
 
     @Override
+    @Nullable
     public Pokemon getByName(String name) {
-        return null;
+        try {
+            return SQLite.select().from(Pokemon.class).where(Pokemon_Table.Name.eq(name)).querySingle();
+        } catch (Exception e) {
+            Timber.e(e, "Exception occurred while fetching pokemon by it's name");
+            return null;
+        }
     }
 
     @Override
-    public void getByName(String name, DatabaseModelListener<Pokemon> listener) {
-        return null;
+    public void getByName(String name, final DatabaseModelListener<Pokemon> listener) {
+        SQLite.select().from(Pokemon.class).where(Pokemon_Table.Name.eq(name)).async().queryResultCallback(
+                new QueryTransaction.QueryResultCallback<Pokemon>() {
+                    @Override
+                    public void onQueryResult(QueryTransaction transaction, @NonNull CursorResult<Pokemon> tResult) {
+                        Pokemon pokemon = tResult.toModelClose();
+                        if (pokemon == null) {
+                            listener.onNoModelFound();
+                        } else {
+                            listener.onModelLoaded(pokemon);
+                        }
+                    }
+                }).execute();
     }
 
     @Override
@@ -64,26 +83,24 @@ public class DBFlowPokemonDAO implements PokemonDAO {
         try {
             return SQLite.select().from(Pokemon.class).queryList();
         } catch (Exception e) {
-            Timber.e(e, "Exception occurred while fetching list of pokemons");
+            Timber.e(e, "Exception occurred while fetching list of Pokemons");
             return new ArrayList<>();
         }
     }
 
     @Override
-    public void getAll(final DatabaseModelListener<Pokemon> listener) {
+    public void getAll(final DatabaseModelListener<List<Pokemon>> listener) {
         SQLite.select().from(Pokemon.class).async().queryResultCallback(new QueryTransaction.QueryResultCallback<Pokemon>() {
             @Override
             public void onQueryResult(QueryTransaction transaction, @NonNull CursorResult<Pokemon> tResult) {
                 List<Pokemon> results = tResult.toListClose();
 
-                if(results == null || results.isEmpty()){
+                if (results == null || results.isEmpty()) {
                     listener.onNoModelFound();
-                }
-                else{
-                    listener.onModelLoaded();
+                } else {
+                    listener.onModelLoaded(results);
                 }
             }
         }).execute();
-
     }
 }

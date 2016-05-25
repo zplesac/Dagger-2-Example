@@ -33,12 +33,9 @@ public class Pokemon extends BaseModel implements Serializable {
 
     public static final String WEIGHT = "weight";
 
-    @Column(name = "DatabaseId")
-    @PrimaryKey(autoincrement = true)
-    long databaseId;
-
     @SerializedName(NAME)
     @Column(name = "Name")
+    @PrimaryKey
     String name;
 
     @SerializedName(RESOURCE_URI)
@@ -73,10 +70,6 @@ public class Pokemon extends BaseModel implements Serializable {
         } catch (Exception e) {
             return 0;
         }
-    }
-
-    public long getDatabaseId() {
-        return databaseId;
     }
 
     public String getName() {
