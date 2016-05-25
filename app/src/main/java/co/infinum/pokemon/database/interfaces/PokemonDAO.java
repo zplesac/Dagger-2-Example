@@ -27,5 +27,5 @@ public interface PokemonDAO {
 
     List<Pokemon> getAll();
 
-    void getAll(DatabaseModelListener<Pokemon> listener);
+    void getAll(DatabaseModelListener<List<Pokemon>> listener);
 }
