@@ -23,9 +23,9 @@ public interface PokemonDAO {
 
     Pokemon getByName(String name);
 
-    Pokemon getByName(String name, DatabaseModelListener<Pokemon> listener);
+    void getByName(String name, DatabaseModelListener<Pokemon> listener);
 
     List<Pokemon> getAll();
 
-    List<Pokemon> getAll(DatabaseModelListener<Pokemon> listener);
+    void getAll(DatabaseModelListener<Pokemon> listener);
 }
