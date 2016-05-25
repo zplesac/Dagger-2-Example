@@ -13,9 +13,9 @@ public interface PokemonDAO {
 
     void insert(List<Pokemon> pokemon);
 
-    void update(Pokemon pokemon);
+    int update(Pokemon pokemon);
 
-    void update(List<Pokemon> pokemon);
+    int update(List<Pokemon> pokemon);
 
     boolean delete(Pokemon pokemon);
 
