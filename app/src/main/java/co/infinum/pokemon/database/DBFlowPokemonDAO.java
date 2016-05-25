@@ -37,6 +37,15 @@ public class DBFlowPokemonDAO implements PokemonDAO {
 
     @Override
     public void update(Pokemon pokemon) {
+        SQLite.update(Pokemon.class)
+                .set(Pokemon_Table.Attack.eq(pokemon.getAttack()),
+                        Pokemon_Table.Defense.eq(pokemon.getDefense()),
+                        Pokemon_Table.Height.eq(pokemon.getHeight()),
+                        Pokemon_Table.Hp.eq(pokemon.getHp()),
+                        Pokemon_Table.Weight.eq(pokemon.getWeight()),
+                        Pokemon_Table.ResourceUri.eq(pokemon.getResourceUri())
+                )
+                .where(Pokemon_Table.Name.is(pokemon.getName())).execute();
 
     }
 
@@ -77,9 +86,10 @@ public class DBFlowPokemonDAO implements PokemonDAO {
                 .error(new Transaction.Error() {
                     @Override
                     public void onError(Transaction transaction, Throwable error) {
-                        listener.onError(error.getCause());
+                        listener.onError(error);
                     }
-                }).build();
+                })
+                .build();
         transaction.execute();
     }
 
@@ -98,7 +108,36 @@ public class DBFlowPokemonDAO implements PokemonDAO {
             return true;
         } catch (Exception e) {
             Timber.e(e, "Exception occurred while deleting Pokemons!");
+            return false;
         }
+    }
+
+    @Override
+    public void delete(List<Pokemon> pokemons, final DatabaseActionListener listener) {
+        ProcessModelTransaction<Pokemon> deleteTransaction =
+                new ProcessModelTransaction.Builder<>(new ProcessModelTransaction.ProcessModel<Pokemon>() {
+                    @Override
+                    public void processModel(Pokemon model) {
+                        model.delete();
+                    }
+                }).addAll(pokemons).build();
+
+        Transaction transaction = FlowManager.getDatabase(PokemonDatabase.class)
+                .beginTransactionAsync(deleteTransaction)
+                .success(new Transaction.Success() {
+                    @Override
+                    public void onSuccess(Transaction transaction) {
+                        listener.onSuccess();
+                    }
+                })
+                .error(new Transaction.Error() {
+                    @Override
+                    public void onError(Transaction transaction, Throwable error) {
+                        listener.onError(error);
+                    }
+                })
+                .build();
+        transaction.execute();
     }
 
     @Override

@@ -7,5 +7,5 @@ public interface DatabaseActionListener {
 
     void onSuccess();
 
-    void onError(Exception e);
+    void onError(Throwable e);
 }
