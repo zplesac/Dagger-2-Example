@@ -1,8 +1,11 @@
 package co.infinum.pokemon.database;
 
+import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.CursorResult;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
 import com.raizlabs.android.dbflow.structure.database.transaction.QueryTransaction;
+import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +13,7 @@ import android.support.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.infinum.pokemon.database.interfaces.DatabaseActionListener;
 import co.infinum.pokemon.database.interfaces.DatabaseModelListener;
 import co.infinum.pokemon.database.interfaces.PokemonDAO;
 import co.infinum.pokemon.models.Pokemon;
@@ -42,21 +46,56 @@ public class DBFlowPokemonDAO implements PokemonDAO {
     }
 
     @Override
-    public void delete(Pokemon pokemon) {
-        try{
+    public boolean delete(Pokemon pokemon) {
+        try {
             pokemon.delete();
-        }
-        catch (Exception e){
+            return true;
+        } catch (Exception e) {
             Timber.e(e, "Exception occurred while deleting Pokemon!");
+            return false;
         }
     }
 
     @Override
-    public void delete(List<Pokemon> pokemons) {
+    public void delete(Pokemon pokemon, final DatabaseActionListener listener) {
+        ProcessModelTransaction<Pokemon> deleteTransaction =
+                new ProcessModelTransaction.Builder<>(new ProcessModelTransaction.ProcessModel<Pokemon>() {
+                    @Override
+                    public void processModel(Pokemon model) {
+                        model.delete();
+                    }
+                }).add(pokemon).build();
+
+        Transaction transaction = FlowManager.getDatabase(PokemonDatabase.class)
+                .beginTransactionAsync(deleteTransaction)
+                .success(new Transaction.Success() {
+                    @Override
+                    public void onSuccess(Transaction transaction) {
+                        listener.onSuccess();
+                    }
+                })
+                .error(new Transaction.Error() {
+                    @Override
+                    public void onError(Transaction transaction, Throwable error) {
+                        listener.onError(error.getCause());
+                    }
+                }).build();
+        transaction.execute();
+    }
+
+    @Override
+    public boolean delete(List<Pokemon> pokemons) {
         try {
-            for(Pokemon pokemon : pokemons){
-                delete(pokemon);
+            for (Pokemon pokemon : pokemons) {
+                boolean isDeleted = delete(pokemon);
+
+                if (!isDeleted) {
+                    // Something went wrong, break!
+                    return false;
+                }
             }
+
+            return true;
         } catch (Exception e) {
             Timber.e(e, "Exception occurred while deleting Pokemons!");
         }
