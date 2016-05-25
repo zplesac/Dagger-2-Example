@@ -17,9 +17,13 @@ public interface PokemonDAO {
 
     void update(List<Pokemon> pokemon);
 
-    void delete(Pokemon pokemon);
+    boolean delete(Pokemon pokemon);
 
-    void delete(List<Pokemon> pokemons);
+    void delete(Pokemon pokemon, DatabaseActionListener listener);
+
+    boolean delete(List<Pokemon> pokemons);
+
+    void delete(List<Pokemon> pokemons, DatabaseActionListener listener);
 
     Pokemon getByName(String name);
 
