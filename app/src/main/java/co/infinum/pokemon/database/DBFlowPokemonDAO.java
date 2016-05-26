@@ -28,12 +28,18 @@ public class DBFlowPokemonDAO implements PokemonDAO {
 
     @Override
     public void insert(Pokemon pokemon) {
-
+        try {
+            pokemon.save();
+        } catch (Exception e) {
+            Timber.e(e, "Exception occurred while caching Pokemon!");
+        }
     }
 
     @Override
-    public void insert(List<Pokemon> pokemon) {
-
+    public void insert(List<Pokemon> pokemons) {
+        for (Pokemon pokemon : pokemons) {
+            insert(pokemon);
+        }
     }
 
     @Override
