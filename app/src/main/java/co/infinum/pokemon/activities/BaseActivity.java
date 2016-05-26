@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.widget.Toast;
 
 import co.infinum.pokemon.PokemonApp;
 import co.infinum.pokemon.R;
@@ -75,5 +76,12 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
     @Override
     public void showError(String message) {
         showDialog(message);
+    }
+
+    @Override
+    public void showMessage(String message) {
+        if (!isFinishing()) {
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        }
     }
 }
