@@ -9,5 +9,7 @@ public interface PokemonListPresenter extends BasePresenter {
 
     void loadPokemonList();
 
+    void refreshPokemonList();
+
     void onPokemonSelected(Pokemon pokemon);
 }

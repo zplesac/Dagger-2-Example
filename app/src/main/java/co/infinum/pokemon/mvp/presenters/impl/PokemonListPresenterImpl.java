@@ -72,6 +72,13 @@ public class PokemonListPresenterImpl implements PokemonListPresenter, PokemonLi
     }
 
     @Override
+    public void refreshPokemonList() {
+        // Load directly from the web!
+        pokemonListView.showProgress();
+        pokemonListInteractor.loadPokemonList(this);
+    }
+
+    @Override
     public void onPokemonSelected(Pokemon pokemon) {
         pokemonListView.showPokemonDetails(pokemon);
     }
@@ -90,6 +97,7 @@ public class PokemonListPresenterImpl implements PokemonListPresenter, PokemonLi
         pokemonListView.showMessage(StringUtils.getString(R.string.caching_fetched_from_network));
 
         // cache all Pokemons in database
+        pokemonDAO.deleteAll();
         pokemonDAO.insert(pokedex.getPokemons(), new DatabaseActionListener() {
             @Override
             public void onSuccess() {

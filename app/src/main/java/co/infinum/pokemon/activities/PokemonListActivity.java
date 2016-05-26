@@ -2,6 +2,7 @@ package co.infinum.pokemon.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -19,10 +20,14 @@ import co.infinum.pokemon.models.Pokemon;
 import co.infinum.pokemon.mvp.presenters.PokemonListPresenter;
 import co.infinum.pokemon.mvp.views.PokemonListView;
 
-public class PokemonListActivity extends BaseActivity implements PokemonListView, PokemonAdapter.PokemonClickListener {
+public class PokemonListActivity extends BaseActivity implements PokemonListView, PokemonAdapter.PokemonClickListener,
+        SwipeRefreshLayout.OnRefreshListener {
 
     @InjectView(R.id.recycler_pokemon_list)
     protected RecyclerView pokemonListRecycler;
+
+    @InjectView(R.id.swipe_refresh_list)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Inject
     protected PokemonListPresenter pokemonListPresenter;
@@ -36,6 +41,7 @@ public class PokemonListActivity extends BaseActivity implements PokemonListView
         pokemonListRecycler.setHasFixedSize(true);
         pokemonListRecycler.setLayoutManager(new LinearLayoutManager(this));
 
+        swipeRefreshLayout.setOnRefreshListener(this);
         pokemonListPresenter.loadPokemonList();
     }
 
@@ -52,6 +58,12 @@ public class PokemonListActivity extends BaseActivity implements PokemonListView
     }
 
     @Override
+    public void onRefresh() {
+        pokemonListPresenter.refreshPokemonList();
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
     public void onPokemonClicked(Pokemon pokemon) {
         pokemonListPresenter.onPokemonSelected(pokemon);
     }
@@ -61,6 +73,11 @@ public class PokemonListActivity extends BaseActivity implements PokemonListView
         Intent intent = new Intent(this, PokemonDetailsActivity.class);
         intent.putExtra(PokemonDetailsActivity.EXTRA_POKEMON, pokemon);
         startActivity(intent);
+    }
+
+    @Override
+    public void showError(String message) {
+        super.showError(message);
     }
 
     @Override

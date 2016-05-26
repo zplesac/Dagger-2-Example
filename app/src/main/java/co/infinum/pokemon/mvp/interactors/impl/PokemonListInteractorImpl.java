@@ -2,10 +2,12 @@ package co.infinum.pokemon.mvp.interactors.impl;
 
 import javax.inject.Inject;
 
+import co.infinum.pokemon.R;
 import co.infinum.pokemon.models.Pokedex;
 import co.infinum.pokemon.mvp.interactors.PokemonListInteractor;
 import co.infinum.pokemon.mvp.listeners.PokemonListListener;
 import co.infinum.pokemon.network.PokemonService;
+import co.infinum.pokemon.utils.StringUtils;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -53,7 +55,7 @@ public class PokemonListInteractorImpl implements PokemonListInteractor, Callbac
     @Override
     public void failure(RetrofitError error) {
         if (!isCanceled) {
-            pokemonListListener.onFailure(error.getMessage());
+            pokemonListListener.onFailure(StringUtils.getString(R.string.error_network_problem));
         }
     }
 }
