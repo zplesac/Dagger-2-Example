@@ -12,7 +12,7 @@ import dagger.Provides;
 public class PokemonDAOModule {
 
     @Provides
-    public PokemonDAO providePokemonDAO(DBFlowPokemonDAO dao) {
-        return dao;
+    public PokemonDAO providePokemonDAO() {
+        return new DBFlowPokemonDAO();
     }
 }

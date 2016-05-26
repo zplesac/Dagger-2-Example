@@ -10,4 +10,6 @@ public interface BaseView {
     void hideProgress();
 
     void showError(String message);
+
+    void showMessage(String message);
 }

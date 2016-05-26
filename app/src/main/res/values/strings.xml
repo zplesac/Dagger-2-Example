@@ -12,5 +12,8 @@
     <string name="height">Height</string>
     <string name="attack">Attack</string>
     <string name="defense">Defense</string>
-
+    <string name="loading">Loading...</string>
+    <string name="caching_success">All Pokemons have been cached!</string>
+    <string name="caching_fetched_from_database">Pokemon data has been fetched from local database!</string>
+    <string name="caching_fetched_from_network">Pokemon data has been fetched from remote server!</string>
 </resources>
