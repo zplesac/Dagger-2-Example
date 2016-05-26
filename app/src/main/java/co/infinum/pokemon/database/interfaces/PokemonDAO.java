@@ -9,21 +9,21 @@ import co.infinum.pokemon.models.Pokemon;
  */
 public interface PokemonDAO {
 
-    void insert(Pokemon pokemon);
+    boolean insert(Pokemon pokemon);
 
     void insert(Pokemon pokemon, DatabaseActionListener listener);
 
-    void insert(List<Pokemon> pokemon);
+    boolean insert(List<Pokemon> pokemon);
 
     void insert(List<Pokemon> pokemon, DatabaseActionListener listener);
 
     int update(Pokemon pokemon);
 
-    int update(Pokemon pokemon, DatabaseActionListener listener);
+    void update(Pokemon pokemon, DatabaseActionListener listener);
 
     int update(List<Pokemon> pokemon);
 
-    int update(List<Pokemon> pokemon, DatabaseActionListener listener);
+    void update(List<Pokemon> pokemon, DatabaseActionListener listener);
 
     boolean delete(Pokemon pokemon);
 
