@@ -2,6 +2,7 @@ package co.infinum.pokemon.database;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.CursorResult;
+import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
 import com.raizlabs.android.dbflow.structure.database.transaction.QueryTransaction;
@@ -27,19 +28,89 @@ import timber.log.Timber;
 public class DBFlowPokemonDAO implements PokemonDAO {
 
     @Override
-    public void insert(Pokemon pokemon) {
+    public boolean insert(Pokemon pokemon) {
         try {
             pokemon.save();
+            return true;
         } catch (Exception e) {
             Timber.e(e, "Exception occurred while caching Pokemon!");
+            return false;
         }
     }
 
     @Override
-    public void insert(List<Pokemon> pokemons) {
-        for (Pokemon pokemon : pokemons) {
-            insert(pokemon);
+    public boolean insert(List<Pokemon> pokemons) {
+        try {
+            for (Pokemon pokemon : pokemons) {
+                boolean isAdded = insert(pokemon);
+
+                if (!isAdded) {
+                    // Something went wrong, break!
+                    return false;
+                }
+            }
+
+            return true;
+        } catch (Exception e) {
+            Timber.e(e, "Exception occurred while inserting Pokemons!");
+            return false;
         }
+    }
+
+    @Override
+    public void insert(Pokemon pokemon, final DatabaseActionListener listener) {
+        ProcessModelTransaction<Pokemon> deleteTransaction =
+                new ProcessModelTransaction.Builder<>(new ProcessModelTransaction.ProcessModel<Pokemon>() {
+                    @Override
+                    public void processModel(Pokemon model) {
+                        model.save();
+                    }
+                }).add(pokemon).build();
+
+        Transaction transaction = FlowManager.getDatabase(PokemonDatabase.class)
+                .beginTransactionAsync(deleteTransaction)
+                .success(new Transaction.Success() {
+                    @Override
+                    public void onSuccess(Transaction transaction) {
+                        listener.onSuccess();
+                    }
+                })
+                .error(new Transaction.Error() {
+                    @Override
+                    public void onError(Transaction transaction, Throwable error) {
+                        listener.onError(error);
+                    }
+                })
+                .build();
+        transaction.execute();
+    }
+
+    @Override
+    public void insert(List<Pokemon> pokemons, final DatabaseActionListener listener) {
+        ProcessModelTransaction<Pokemon> deleteTransaction =
+                new ProcessModelTransaction.Builder<>(new ProcessModelTransaction.ProcessModel<Pokemon>() {
+                    @Override
+                    public void processModel(Pokemon model) {
+                        model.save();
+                    }
+                }).addAll(pokemons).build();
+
+        Transaction transaction = FlowManager.getDatabase(PokemonDatabase.class)
+                .beginTransactionAsync(deleteTransaction)
+                .success(new Transaction.Success() {
+                    @Override
+                    public void onSuccess(Transaction transaction) {
+                        listener.onSuccess();
+                    }
+                })
+                .error(new Transaction.Error() {
+                    @Override
+                    public void onError(Transaction transaction, Throwable error) {
+                        listener.onError(error);
+                    }
+                })
+                .build();
+        transaction.execute();
     }
 
     @Override
@@ -77,6 +148,68 @@ public class DBFlowPokemonDAO implements PokemonDAO {
         }
 
         return columnCount;
+    }
+
+    @Override
+    public void update(Pokemon pokemon, final DatabaseActionListener listener) {
+        SQLite.update(Pokemon.class)
+                .set(Pokemon_Table.Attack.eq(pokemon.getAttack()),
+                        Pokemon_Table.Defense.eq(pokemon.getDefense()),
+                        Pokemon_Table.Height.eq(pokemon.getHeight()),
+                        Pokemon_Table.Hp.eq(pokemon.getHp()),
+                        Pokemon_Table.Weight.eq(pokemon.getWeight()),
+                        Pokemon_Table.ResourceUri.eq(pokemon.getResourceUri())
+                )
+                .where(Pokemon_Table.Name.is(pokemon.getName()))
+                .async()
+                .success(new Transaction.Success() {
+                    @Override
+                    public void onSuccess(Transaction transaction) {
+                        listener.onSuccess();
+                    }
+                })
+                .error(new Transaction.Error() {
+                    @Override
+                    public void onError(Transaction transaction, Throwable error) {
+                        listener.onError(error);
+                    }
+                })
+                .execute();
+    }
+
+    @Override
+    public void update(List<Pokemon> pokemons, final DatabaseActionListener listener) {
+        ProcessModelTransaction<Pokemon> updateTransaction =
+                new ProcessModelTransaction.Builder<>(new ProcessModelTransaction.ProcessModel<Pokemon>() {
+                    @Override
+                    public void processModel(Pokemon pokemon) {
+                        SQLite.update(Pokemon.class)
+                                .set(Pokemon_Table.Attack.eq(pokemon.getAttack()),
+                                        Pokemon_Table.Defense.eq(pokemon.getDefense()),
+                                        Pokemon_Table.Height.eq(pokemon.getHeight()),
+                                        Pokemon_Table.Hp.eq(pokemon.getHp()),
+                                        Pokemon_Table.Weight.eq(pokemon.getWeight()),
+                                        Pokemon_Table.ResourceUri.eq(pokemon.getResourceUri())
+                                ).execute();
+                    }
+                }).addAll(pokemons).build();
+
+        Transaction transaction = FlowManager.getDatabase(PokemonDatabase.class)
+                .beginTransactionAsync(updateTransaction)
+                .success(new Transaction.Success() {
+                    @Override
+                    public void onSuccess(Transaction transaction) {
+                        listener.onSuccess();
+                    }
+                })
+                .error(new Transaction.Error() {
+                    @Override
+                    public void onError(Transaction transaction, Throwable error) {
+                        listener.onError(error);
+                    }
+                })
+                .build();
+        transaction.execute();
     }
 
     @Override
@@ -163,6 +296,11 @@ public class DBFlowPokemonDAO implements PokemonDAO {
                 })
                 .build();
         transaction.execute();
+    }
+
+    @Override
+    public void deleteAll() {
+        Delete.table(Pokemon.class);
     }
 
     @Override
