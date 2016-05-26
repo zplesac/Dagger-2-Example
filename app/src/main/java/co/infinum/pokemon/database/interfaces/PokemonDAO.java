@@ -11,11 +11,19 @@ public interface PokemonDAO {
 
     void insert(Pokemon pokemon);
 
+    void insert(Pokemon pokemon, DatabaseActionListener listener);
+
     void insert(List<Pokemon> pokemon);
+
+    void insert(List<Pokemon> pokemon, DatabaseActionListener listener);
 
     int update(Pokemon pokemon);
 
+    int update(Pokemon pokemon, DatabaseActionListener listener);
+
     int update(List<Pokemon> pokemon);
+
+    int update(List<Pokemon> pokemon, DatabaseActionListener listener);
 
     boolean delete(Pokemon pokemon);
 
@@ -32,4 +40,6 @@ public interface PokemonDAO {
     List<Pokemon> getAll();
 
     void getAll(DatabaseModelListener<List<Pokemon>> listener);
+
+    void deleteAll();
 }
