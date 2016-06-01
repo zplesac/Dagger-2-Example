@@ -17,11 +17,14 @@ public interface PokemonDAO {
 
     void insert(List<Pokemon> pokemon, DatabaseActionListener listener);
 
-    int update(Pokemon pokemon);
+    void update(Pokemon pokemon, String resourceUri, int hp, int attack, int defense, String height,
+                String weight);
+
+    void update(Pokemon pokemon);
 
     void update(Pokemon pokemon, DatabaseActionListener listener);
 
-    int update(List<Pokemon> pokemon);
+    void update(List<Pokemon> pokemon);
 
     void update(List<Pokemon> pokemon, DatabaseActionListener listener);
 

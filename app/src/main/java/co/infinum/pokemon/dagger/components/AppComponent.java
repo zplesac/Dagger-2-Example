@@ -3,6 +3,7 @@ package co.infinum.pokemon.dagger.components;
 import javax.inject.Singleton;
 
 import co.infinum.pokemon.PokemonApp;
+import co.infinum.pokemon.dagger.modules.ContextModule;
 import co.infinum.pokemon.dagger.modules.DefaultExecutorsModule;
 import co.infinum.pokemon.dagger.modules.HostModule;
 import co.infinum.pokemon.dagger.modules.NetworkModule;
@@ -27,6 +28,6 @@ public interface AppComponent {
 
     PokemonListComponent plus(PokemonListModule pokemonListModule);
 
-    PokemonDetailsComponent plus(PokemonDetailsModule pokemonDetailsModule);
+    PokemonDetailsComponent plus(PokemonDetailsModule pokemonDetailsModule, ContextModule contextModule);
 
 }

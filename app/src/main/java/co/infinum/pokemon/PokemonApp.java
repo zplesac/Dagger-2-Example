@@ -7,6 +7,7 @@ import android.app.Application;
 
 import co.infinum.pokemon.dagger.components.AppComponent;
 import co.infinum.pokemon.dagger.components.DaggerAppComponent;
+import timber.log.Timber;
 
 public class PokemonApp extends Application {
 
@@ -26,6 +27,8 @@ public class PokemonApp extends Application {
     public void onCreate() {
         super.onCreate();
         setInstance(this);
+
+        Timber.plant(new Timber.DebugTree());
 
         applicationComponent = DaggerAppComponent.create();
         FlowManager.init(new FlowConfig.Builder(this).build());

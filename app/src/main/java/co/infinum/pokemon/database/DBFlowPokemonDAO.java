@@ -8,7 +8,6 @@ import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTr
 import com.raizlabs.android.dbflow.structure.database.transaction.QueryTransaction;
 import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -114,40 +113,43 @@ public class DBFlowPokemonDAO implements PokemonDAO {
     }
 
     @Override
-    public int update(Pokemon pokemon) {
+    public void update(Pokemon pokemon, String resourceUri, int hp, int attack, int defense, String height, String weight) {
         try {
-            Cursor cursor = SQLite.update(Pokemon.class)
-                    .set(Pokemon_Table.Attack.eq(pokemon.getAttack()),
-                            Pokemon_Table.Defense.eq(pokemon.getDefense()),
-                            Pokemon_Table.Height.eq(pokemon.getHeight()),
-                            Pokemon_Table.Hp.eq(pokemon.getHp()),
-                            Pokemon_Table.Weight.eq(pokemon.getWeight()),
-                            Pokemon_Table.ResourceUri.eq(pokemon.getResourceUri())
-                    )
-                    .where(Pokemon_Table.Name.is(pokemon.getName())).query();
-
-            if (cursor != null) {
-                int columnCount = cursor.getColumnCount();
-                cursor.close();
-                return columnCount;
-            } else {
-                return 0;
-            }
+            pokemon.setResourceUri(resourceUri);
+            pokemon.setHp(hp);
+            pokemon.setAttack(attack);
+            pokemon.setDefense(defense);
+            pokemon.setHeight(height);
+            pokemon.setWeight(weight);
+            pokemon.update();
         } catch (Exception e) {
             Timber.e(e, "Exception occurred while updating Pokemon!");
-            return 0;
         }
     }
 
     @Override
-    public int update(@NonNull List<Pokemon> pokemons) {
-        int columnCount = 0;
+    public void update(Pokemon pokemon) {
+        try {
+            SQLite.update(Pokemon.class)
+                    .set(Pokemon_Table.Attack.eq(pokemon.getAttack()),
+                            Pokemon_Table.Defense.eq(pokemon.getDefense()),
+                            Pokemon_Table.Height.eq(pokemon.getHeight()),
+                            Pokemon_Table.Hp.eq(pokemon.getHp()),
+                            Pokemon_Table.Weight.eq("100"),
+                            Pokemon_Table.ResourceUri.eq(pokemon.getResourceUri())
+                    )
+                    .where(Pokemon_Table.Name.is(pokemon.getName().toLowerCase())).async().execute();
+        } catch (Exception e) {
+            Timber.e(e, "Exception occurred while updating Pokemon!");
+        }
+    }
+
+    @Override
+    public void update(@NonNull List<Pokemon> pokemons) {
 
         for (Pokemon pokemon : pokemons) {
-            columnCount += update(pokemon);
+            update(pokemon);
         }
-
-        return columnCount;
     }
 
     @Override

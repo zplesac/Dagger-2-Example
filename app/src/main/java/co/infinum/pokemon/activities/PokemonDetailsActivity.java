@@ -9,6 +9,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import co.infinum.pokemon.R;
 import co.infinum.pokemon.dagger.components.AppComponent;
+import co.infinum.pokemon.dagger.modules.ContextModule;
 import co.infinum.pokemon.dagger.modules.PokemonDetailsModule;
 import co.infinum.pokemon.models.Pokemon;
 import co.infinum.pokemon.mvp.presenters.PokemonDetailsPresenter;
@@ -51,9 +52,8 @@ public class PokemonDetailsActivity extends BaseActivity implements PokemonDetai
 
     @Override
     protected void injectDependencies(AppComponent appComponent) {
-        appComponent.plus(new PokemonDetailsModule(this)).inject(this);
+        appComponent.plus(new PokemonDetailsModule(this), new ContextModule(this)).inject(this);
     }
-
 
     @Override
     protected void onDestroy() {
