@@ -3,6 +3,7 @@ package co.infinum.pokemon.dagger.components;
 import javax.inject.Singleton;
 
 import co.infinum.pokemon.PokemonApp;
+import co.infinum.pokemon.dagger.modules.AlarmModule;
 import co.infinum.pokemon.dagger.modules.ContextModule;
 import co.infinum.pokemon.dagger.modules.DefaultExecutorsModule;
 import co.infinum.pokemon.dagger.modules.HostModule;
@@ -30,4 +31,5 @@ public interface AppComponent {
 
     PokemonDetailsComponent plus(PokemonDetailsModule pokemonDetailsModule, ContextModule contextModule);
 
+    AlarmComponent plus(AlarmModule alarmModule);
 }
