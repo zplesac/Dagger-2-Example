@@ -9,9 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.widget.Toast;
 
+import javax.inject.Inject;
+
 import co.infinum.pokemon.PokemonApp;
 import co.infinum.pokemon.R;
 import co.infinum.pokemon.dagger.components.AppComponent;
+import co.infinum.pokemon.database.interfaces.DatabaseWatcher;
 import co.infinum.pokemon.mvp.views.BaseView;
 
 /**
@@ -21,12 +24,27 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
 
     protected Dialog progressDialog;
 
+    @Inject
+    DatabaseWatcher databaseWatcher;
+
     protected abstract void injectDependencies(AppComponent appComponent);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         injectDependencies(PokemonApp.getInstance().getApplicationComponent());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        databaseWatcher.registerWatcher();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        databaseWatcher.unregisterWatcher();
     }
 
     protected void showProgressDialog() {

@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import co.infinum.pokemon.PokemonApp;
 import co.infinum.pokemon.dagger.modules.AlarmModule;
 import co.infinum.pokemon.dagger.modules.ContextModule;
+import co.infinum.pokemon.dagger.modules.DatabaseWatcherModule;
 import co.infinum.pokemon.dagger.modules.DefaultExecutorsModule;
 import co.infinum.pokemon.dagger.modules.HostModule;
 import co.infinum.pokemon.dagger.modules.NetworkModule;
@@ -20,7 +21,8 @@ import dagger.Component;
         NetworkModule.class,
         HostModule.class,
         DefaultExecutorsModule.class,
-        PokemonDAOModule.class
+        PokemonDAOModule.class,
+        DatabaseWatcherModule.class
 })
 @Singleton
 public interface AppComponent {

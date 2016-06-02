@@ -1,8 +1,8 @@
 package co.infinum.pokemon.database;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
 import com.raizlabs.android.dbflow.sql.language.CursorResult;
-import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
 import com.raizlabs.android.dbflow.structure.database.transaction.QueryTransaction;
@@ -13,6 +13,8 @@ import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import co.infinum.pokemon.database.interfaces.DatabaseActionListener;
 import co.infinum.pokemon.database.interfaces.DatabaseModelListener;
@@ -25,6 +27,13 @@ import timber.log.Timber;
  * Created by Željko Plesac on 25/05/16.
  */
 public class DBFlowPokemonDAO implements PokemonDAO {
+
+    private FlowContentObserver flowContentObserver;
+
+    @Inject
+    public DBFlowPokemonDAO(FlowContentObserver flowContentObserver) {
+        this.flowContentObserver = flowContentObserver;
+    }
 
     @Override
     public boolean insert(Pokemon pokemon) {
@@ -135,7 +144,7 @@ public class DBFlowPokemonDAO implements PokemonDAO {
                             Pokemon_Table.Defense.eq(pokemon.getDefense()),
                             Pokemon_Table.Height.eq(pokemon.getHeight()),
                             Pokemon_Table.Hp.eq(pokemon.getHp()),
-                            Pokemon_Table.Weight.eq("100"),
+                            Pokemon_Table.Weight.eq("1000"),
                             Pokemon_Table.ResourceUri.eq(pokemon.getResourceUri())
                     )
                     .where(Pokemon_Table.Name.is(pokemon.getName().toLowerCase())).async().execute();
@@ -302,7 +311,12 @@ public class DBFlowPokemonDAO implements PokemonDAO {
 
     @Override
     public void deleteAll() {
-        Delete.table(Pokemon.class);
+        flowContentObserver.beginTransaction();
+        List<Pokemon> pokemons = getAll();
+        for (Pokemon pokemon : pokemons) {
+            pokemon.delete();
+        }
+        flowContentObserver.endTransactionAndNotify();
     }
 
     @Override

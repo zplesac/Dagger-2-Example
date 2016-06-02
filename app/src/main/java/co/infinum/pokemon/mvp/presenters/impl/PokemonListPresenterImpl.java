@@ -17,7 +17,6 @@ import co.infinum.pokemon.mvp.interactors.PokemonListInteractor;
 import co.infinum.pokemon.mvp.listeners.PokemonListListener;
 import co.infinum.pokemon.mvp.presenters.PokemonListPresenter;
 import co.infinum.pokemon.mvp.views.PokemonListView;
-import co.infinum.pokemon.utils.AlarmUtils;
 import co.infinum.pokemon.utils.StorageUtils;
 import co.infinum.pokemon.utils.StringUtils;
 
@@ -72,7 +71,7 @@ public class PokemonListPresenterImpl implements PokemonListPresenter, PokemonLi
         }
 
         // schedule database reset after one minute
-        AlarmUtils.scheduleDatabaseReset();
+        // AlarmUtils.scheduleDatabaseReset();
     }
 
     @Override
